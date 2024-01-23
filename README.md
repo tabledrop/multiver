@@ -6,10 +6,13 @@
 
 this project is meant to replicate the experience of winver while being platform agnostic. I'm feeling evil and making this run on Linux and macOS only
 
-## requirements
+## requirements (also seen in requirements.txt)
 
 * python3
 * tkinter
+* distro==1.9.0
+* Pillow==10.2.0
+* ttkbootstrap==1.10.1
 
 ## usage
 
