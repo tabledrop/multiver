@@ -4,7 +4,7 @@
 
 ## purpose
 
-this project is meant to replicate the experience of winver while being platform agnostic. yes, this should also work on Windows too lol.
+this project is meant to replicate the experience of winver while being platform agnostic. I'm feeling evil and making this run on Linux and macOS only
 
 ## requirements
 
@@ -13,7 +13,7 @@ this project is meant to replicate the experience of winver while being platform
 
 ## usage
 
-when multiver is summoned, it spawns a window with information in a similar fashion as winver.exe on Windows. and also like Windows, there are no option flags or anything fancy
+when multiver is summoned, it spawns a window with information in a similar fashion as winver.exe on Windows. and also like Windows, there are no option flags or anything fancy. but if for whatever reason there is an option flag, it would probably spit this out:
 
 ```
   multiver.py [-h]

@@ -1,76 +1,108 @@
-import windowgen
+from tkinter import *
+from ttkbootstrap.constants import *
+import ttkbootstrap as tb 
 import platform
+import distro
+import getpass # trust me I don't want your password lol. no network capabilities here
+import os
+from PIL import ImageTk, Image
 
-PLATFORM_OS_NAME = platform.system()
+PROG_PATH = os.path.dirname(os.path.realpath(__file__))
+USERNAME = getpass.getuser() # searches env vars for username
+WINDOW_WIDTH = 400 
+WINDOW_HEIGHT = 450 
 
-def DisplaymacOS():
-    result = []
-
-    if PLATFORM_OS_NAME != "Darwin":
-        print("[DEBUG]: Not macOS")
-
-    # if somehow you have a non-standard macOS version
-    # (impossible unless you're a macOS dev)
-    # this is a generic placeholder for that
-    DarwinMajorVersion = 0
-    DarwinVersion = "Generic"
-    result.append(DarwinMajorVersion)
-    result.append(DarwinVersion)
-
-    if PLATFORM_OS_NAME == "Darwin":
-        if int(float(platform.release()[0:3])) == 0:
-            return result
+# simply gathers OS name, version, and includes Linux distro guesser since Linux distros are weird lol
+def compileOSInfo():
+    result = [] # arr to store OS name and version
+    if platform.system() == "Darwin":
+        result.append(platform.system())
+        result.append(platform.release())
+    elif platform.system() == "Linux":
+        result.append(distro.name())
+        if distro.os_release_attr("version") == '':
+            result.append("rolling")
         else:
-            result = []
-            DarwinVersion = platform.release()
-            DarwinMajorVersion = int(float(platform.release()[0:3]))
-            result.append(DarwinMajorVersion)
-            result.append(DarwinVersion)
-            return result
+            result.append(distro.os_release_attr("version"))
+    elif platform.system() == "Windows":
+        print("windows key + r, type in 'winver.exe', and boom. you don't need this tool")
+        result.append("lol")
+        result.append("nope")
+    return result
 
-def DisplayWindows():
-    result = []
+# find logo banner in filesystem and reference to ../banner/
+def findFileBanner():
+    filePath = [PROG_PATH, "/banner/"] # arr to hold filename to be searched
+    if platform.system() == "Darwin":
+        filePath.append("macOS/")
+        filePath.append(str(int(float(platform.release()[0:3])))) # rewrite for older OS X systems
+    elif platform.system() == "Linux":
+        filePath.append("linux/")
+        filePath.append(distro.id())
+        # reference https://distro.readthedocs.io/en/latest/#distro.id for possible Linux names, also includes BSD derivatives
+    elif platform.system() == "Windows":
+        filePath.append("windows/")
+        filePath.append(platform.release())
+    filePath.append(".jpg")
 
-    if PLATFORM_OS_NAME != "Windows":
-        print("[DEBUG]: Not Windows")
+    filePath = ''.join(filePath)
+    return filePath
 
-    WindowsMajorVersion = 5.1
-    WindowsVersion = "XP"
-    result.append(WindowsMajorVersion)
-    result.append(WindowsVersion)
+# this is the body of the text that should hopefully show in the window
+def returnCopyrightText(OSInfo, user):
+    os = OSInfo.pop(0)
+    version = OSInfo.pop(0)
+    username = user
+    text = f"""
+    {os}
+    {version}
+    Copyright to respective owners above. All rights reserved.
 
-    if PLATFORM_OS_NAME == "Windows":
-        if platform.release() == 5.1:
-            return result
-        else:
-            result = []
-            WindowsMajorVersion = platform.release()
-            WindowsVersion = platform.release()
-            result.append(WindowsMajorVersion)
-            result.append(WindowsVersion)
-            return result
+    The {os} operating system may come with a warranty or it may not. Just depends on what it is.
 
-def DisplayLinux():
-    result = []
+    This product, be it: the combination of software, hardware, and customizations are from the proud owner of this computer:
+        {username}
 
-    if PLATFORM_OS_NAME != "Linux":
-        print("[DEBUG]: Not Linux")
+    """
+    return text
 
-    if PLATFORM_OS_NAME == "Linux":
-        print("[DEBUG]: TO BE IMPLEMENTED")
+# debug print to console, will be removed in later commits
+print(compileOSInfo())
+print(findFileBanner())
+print(returnCopyrightText(compileOSInfo(), USERNAME))
 
-print(DisplaymacOS())
-print(DisplayWindows())
-print(DisplayLinux())
+# window init
+root = tb.Window(themename="cosmo")
+root.title("multiver.py")
+root.geometry('%dx%d' % (WINDOW_WIDTH, WINDOW_HEIGHT))
+root.resizable(False, False)
 
-# def PlatformDiscover():
-#    if PLATFORM_OS_NAME == "Windows":
-#        print("Winver exists lol")
-#   elif PLATFORM_OS_NAME == "Darwin":
-#        DarwinMajorVer = int(float(platform.release()[0:3]))
-#       DarwinVersion = platform.release()
-#        print(DarwinVersion)
-#    elif PLATFORM_OS_NAME == "Linux":
-#        print("literal chad lol")
+# banner image logic
+img = Image.open(findFileBanner()).resize((int(WINDOW_WIDTH), int(WINDOW_HEIGHT/2.5)))
+img = ImageTk.PhotoImage(img)
+imglabel = tb.Label(root,
+                    image=img)
+imglabel.pack(sticky='w')
 
-# PlatformDiscover()
+# img separator to text 
+textSeparator = tb.Separator(bootstyle="secondary",
+                             orient="horizontal")
+textSeparator.pack(fill="x")
+
+# display text to window
+textDisplay = tb.Label(text=returnCopyrightText(compileOSInfo(), USERNAME),
+                       wraplength=(WINDOW_WIDTH-20),
+                       justify="left")
+
+
+
+textDisplay.pack()
+
+# exit button and logic
+exitButton = tb.Button(text="OK",
+                       bootstyle="default, outline",
+                       command=lambda: root.quit())
+exitButton.place(x=330,
+                 y=400)
+
+root.mainloop()
