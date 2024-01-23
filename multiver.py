@@ -82,7 +82,7 @@ img = Image.open(findFileBanner()).resize((int(WINDOW_WIDTH), int(WINDOW_HEIGHT/
 img = ImageTk.PhotoImage(img)
 imglabel = tb.Label(root,
                     image=img)
-imglabel.pack(sticky='w')
+imglabel.pack()
 
 # img separator to text 
 textSeparator = tb.Separator(bootstyle="secondary",
