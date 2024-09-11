@@ -43,10 +43,28 @@ def findFileBanner():
     elif platform.system() == "Windows":
         filePath.append("windows/")
         filePath.append(platform.release())
-    filePath.append(".jpg")
 
     filePath = ''.join(filePath)
-    return filePath
+    if checkBannerForJPG(filePath) == True:
+        return filePath + ".jpg"
+    elif checkBannerForPNG(filePath) == True:
+        return filePath + ".png"
+    
+def checkBannerForJPG(filePath):
+    filePath = (filePath + ".jpg")
+
+    if os.path.isfile(filePath):
+        return True
+
+    return False
+
+def checkBannerForPNG(filePath):
+    filePath = (filePath + ".png")
+
+    if os.path.isfile(filePath):
+        return True
+
+    return False
 
 # this is the body of the text that should hopefully show in the window
 def returnCopyrightText(OSInfo, user):
@@ -54,8 +72,7 @@ def returnCopyrightText(OSInfo, user):
     version = OSInfo.pop(0)
     username = user
     text = f"""
-    {os}
-    {version}
+    {os} {version}
     Copyright to respective owners above. All rights reserved.
 
     The {os} operating system may come with a warranty or it may not. Just depends on what it is.
