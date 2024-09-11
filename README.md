@@ -1,6 +1,7 @@
 # multiver
 
-*like winver.exe on Windows but universally*
+*like winver.exe on Windows but universally and terribly executed*
+![sample of multiver.py running on my macOS Sonoma machine](/assets/sample.png)
 
 ## purpose
 
