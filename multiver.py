@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Optional, Tuple
 import logging
 import platform
 import getpass
@@ -12,6 +9,7 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 import distro
 from PIL import ImageTk, Image
+from pathlib import Path
 
 # Configure logging
 logging.basicConfig(
@@ -20,15 +18,15 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-@dataclass
 class SystemInfo:
     """Data class to store system information."""
-    os_name: str
-    os_version: str
-    username: str
-    build_number: Optional[str] = None
+    def __init__(self, os_name, os_version, username, build_number=None):
+        self.os_name = os_name
+        self.os_version = os_version
+        self.username = username
+        self.build_number = build_number
     
-    def __str__(self) -> str:
+    def __str__(self):
         """Return a formatted string of system information."""
         info = f"{self.os_name} {self.os_version}"
         if self.build_number:
@@ -39,7 +37,7 @@ class SystemInfoCollector:
     """Handles gathering system information across different platforms."""
     
     @staticmethod
-    def get_system_info() -> SystemInfo:
+    def get_system_info():
         """Collect system information based on the current platform."""
         username = getpass.getuser()
         system = platform.system()
@@ -75,12 +73,12 @@ class SystemInfoCollector:
 class BannerManager:
     """Handles loading and managing system banners."""
     
-    def __init__(self, base_path: Path):
+    def __init__(self, base_path):
         self.base_path = base_path / "banner"
         self.default_width = 400
         self.default_height = 180
         
-    def get_banner_path(self, system_info: SystemInfo) -> Path:
+    def get_banner_path(self, system_info):
         """Get the appropriate banner path for the current system."""
         try:
             if "macOS" in system_info.os_name:
@@ -102,14 +100,14 @@ class BannerManager:
             logger.warning(f"Error loading banner: {e}, using default")
             return self._get_default_banner()
     
-    def _get_default_banner(self) -> Path:
+    def _get_default_banner(self):
         """Return path to default banner."""
         default_banner = self.base_path / "default.png"
         if not default_banner.exists():
             raise FileNotFoundError("Default banner not found")
         return default_banner
     
-    def load_banner(self, path: Path, width: int, height: int) -> ImageTk.PhotoImage:
+    def load_banner(self, path, width, height):
         """Load and resize banner image."""
         try:
             img = Image.open(path).resize((width, height))
