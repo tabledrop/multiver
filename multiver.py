@@ -28,9 +28,9 @@ class SystemInfo:
     
     def __str__(self):
         """Return a formatted string of system information."""
-        info = f"{self.os_name} {self.os_version}"
+        info = "{0} {1}".format(self.os_name, self.os_version)
         if self.build_number:
-            info += f" (Build {self.build_number})"
+            info += " (Build {0})".format(self.build_number)
         return info
 
 class SystemInfoCollector:
@@ -64,10 +64,10 @@ class SystemInfoCollector:
                 logger.info("Windows detected - this program is meant for Unix-like systems")
                 sys.exit("Please use winver.exe instead")
             else:
-                raise NotImplementedError(f"Unsupported operating system: {system}")
+                raise NotImplementedError("Unsupported operating system: {0}".format(system))
                 
         except Exception as e:
-            logger.error(f"Error collecting system information: {e}")
+            logger.error("Error collecting system information: {0}".format(e))
             raise
 
 class BannerManager:
@@ -86,7 +86,7 @@ class BannerManager:
             elif "Linux" in system_info.os_name:
                 banner_dir = self.base_path / "linux" / distro.id()
             else:
-                raise ValueError(f"Unsupported OS for banner: {system_info.os_name}")
+                raise ValueError("Unsupported OS for banner: {0}".format(system_info.os_name))
 
             # Check for both PNG and JPG
             for ext in ['.png', '.jpg']:
@@ -97,7 +97,7 @@ class BannerManager:
             return self._get_default_banner()
             
         except Exception as e:
-            logger.warning(f"Error loading banner: {e}, using default")
+            logger.warning("Error loading banner: {0}, using default".format(e))
             return self._get_default_banner()
     
     def _get_default_banner(self):
@@ -113,7 +113,7 @@ class BannerManager:
             img = Image.open(path).resize((width, height))
             return ImageTk.PhotoImage(img)
         except Exception as e:
-            logger.error(f"Error loading banner image: {e}")
+            logger.error("Error loading banner image: {0}".format(e))
             raise
 
 class MultiverWindow:
@@ -128,7 +128,7 @@ class MultiverWindow:
         # Initialize main window
         self.root = tb.Window(themename="cosmo")
         self.root.title("multiver.py")
-        self.root.geometry(f"{self.width}x{self.height}")
+        self.root.geometry("{0}x{1}".format(self.width, self.height))
         self.root.resizable(False, False)
         
         # Store references to prevent garbage collection
@@ -153,7 +153,7 @@ class MultiverWindow:
             banner_label = tb.Label(self.root, image=self.banner_image)
             banner_label.pack()
         except Exception as e:
-            logger.error(f"Error creating banner: {e}")
+            logger.error("Error creating banner: {0}".format(e))
             # Create text-based header instead
             header = tb.Label(
                 self.root,
@@ -169,17 +169,21 @@ class MultiverWindow:
         
     def _create_info_text(self):
         """Create and display system information text."""
-        text = f"""
-        {str(self.system_info)}
+        text = """
+        {0}
         
         Copyright to respective owners above. All rights reserved.
 
-        The {self.system_info.os_name} operating system may come with a warranty or it may not. Just depends on what it is.
+        The {1} operating system may come with a warranty or it may not. Just depends on what it is.
 
         This product, be it: the combination of software, hardware, and customizations are from the proud owner of this computer:
-            {self.system_info.username}
+            {2}
 
-        """
+        """.format(
+            str(self.system_info),
+            self.system_info.os_name,
+            self.system_info.username
+        )
         text_display = tb.Label(
             self.root,
             text=text,
@@ -218,7 +222,7 @@ class MultiverWindow:
             self.root.clipboard_append(str(self.system_info))
             self.root.update()
         except TclError as e:
-            logger.error(f"Failed to copy to clipboard: {e}")
+            logger.error("Failed to copy to clipboard: {0}".format(e))
             
     def run(self):
         """Start the application."""
@@ -226,7 +230,7 @@ class MultiverWindow:
             self.create_widgets()
             self.root.mainloop()
         except Exception as e:
-            logger.error(f"Application error: {e}")
+            logger.error("Application error: {0}".format(e))
             raise
 
 def main():
@@ -235,7 +239,7 @@ def main():
         app = MultiverWindow()
         app.run()
     except Exception as e:
-        logger.error(f"Fatal error: {e}")
+        logger.error("Fatal error: {0}".format(e))
         sys.exit(1)
 
 if __name__ == "__main__":
